@@ -66,9 +66,11 @@ namespace chomp{
 static size_t const nq (20);	// number of q stacked into xi
 static size_t const cdim (2);	// dimension of config space
 static size_t const xidim (nq * cdim); // dimension of trajectory, xidim = nq * cdim
+static size_t const iteration_limit(1000);
 static double const dt (1.0);	       // time step
 static double const eta (100.0); // >= 1, regularization factor for gradient descent
 static double const lambda (1.0); // weight of smoothness objective
+
 
 //////////////////////////////////////////////////
 // gradient descent etc
@@ -92,11 +94,25 @@ static handle_s * handle[] = { &rep1, &rep2, 0 };
 static void init_chomp (Vector const &qs,Vector const &qe,Vector  &xi)
 {
 
-  xi = Vector::Zero (xidim);
-  for (size_t ii (0); ii < nq; ++ii) {
-    xi.block (cdim * ii, 0, cdim, 1) = qs;
+  if (xi.rows()==xidim){
+    //do nothing, use existing trajectory
   }
+  else {
+    //initalize a new trajectory based on a direct line connecting qs to qe
+    xi = Vector::Zero (xidim);
+    Vector dxi(cdim);
+    dxi<<(qe(0)-qs(0))/(nq-1),(qe(0)-qs(0))/(nq-1);
+    for (size_t ii (0); ii < nq; ++ii) {
+      xi.block (cdim * ii, 0, cdim, 1) = qs+ii*dxi;
 
+    }
+    /*
+    //use this instead if you want to inalize all points to qs
+    for (size_t ii (0); ii < nq; ++ii) {
+      xi.block (cdim * ii, 0, cdim, 1) = qs;
+    }
+    */
+  }
   AA = Matrix::Zero (xidim, xidim);
   for (size_t ii(0); ii < nq; ++ii) {
     AA.block (cdim * ii, cdim * ii, cdim , cdim) = 2.0 * Matrix::Identity (cdim, cdim);
@@ -124,7 +140,7 @@ static void init_chomp (Vector const &qs,Vector const &qe,Vector  &xi)
 }
 
 
-static void chomp_iteration (Vector const &qs,Vector const &qe,Vector  &xi, Matrix const &obs)
+static double chomp_iteration (Vector const &qs,Vector const &qe,Vector  &xi, Matrix const &obs)
 {
 
   //////////////////////////////////////////////////
@@ -153,7 +169,7 @@ static void chomp_iteration (Vector const &qs,Vector const &qe,Vector  &xi, Matr
 
     // In this case, C and W are the same, Jacobian is identity.  We
     // still write more or less the full-fledged CHOMP expressions
-    // (but we only use one body point) to make subsequent extension
+    // (but  we only use one body point) to make subsequent extension
     // easier.
     //
     Vector const & xx (qq);
@@ -197,6 +213,8 @@ static void chomp_iteration (Vector const &qs,Vector const &qe,Vector  &xi, Matr
 
   Vector dxi (Ainv * (nabla_obs + lambda * nabla_smooth));
   xi -= dxi / eta;
+  //return the error (in Euclidean sense ). Remeber that the difference is -dxi/eta
+  return dxi.norm()/eta;
 
   // end of "the" CHOMP iteration
   //////////////////////////////////////////////////
@@ -212,7 +230,7 @@ void run_chomp(Vector const &qs,Vector const &qe, Vector &xi, Matrix const &obs)
   chomp_iteration();
   cout<<"Done!"<<'\n';
 */
-
+/*
 cout<<"Start Point:"<<'\n';
 cout<<qs<<'\n';
 cout<<"End Point:"<<'\n';
@@ -220,13 +238,25 @@ cout<<qe<<'\n';
 
 cout<<"xi':"<<'\n';
 cout<<xi.transpose()<<'\n';
+*/
 init_chomp(qs,qe,xi);
+/*
 cout<<"xi':"<<'\n';
 cout<<xi.transpose()<<'\n';
-for (int i=0;i<500;i++){
-chomp_iteration(qs,qe,xi,obs);
+*/
+
+double err;
+for (size_t ii=0;ii<iteration_limit;ii++){
+  err=chomp_iteration(qs,qe,xi,obs);
+  //cout<<err;
+  if (err<0.01){
+    cout<<"Done after "<<ii+1<<" iteration."<<endl;
+    break;
+  }
 }
+/*
 cout<<"xi':"<<'\n';
 cout<<xi.transpose()<<'\n';
+*/
 }
 } //namespace
