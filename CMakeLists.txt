@@ -96,5 +96,5 @@ endif (GTK2_FOUND)
 
 ##################################################
 
-add_executable (pp2dshell pp2dshell.cpp chomp.cpp gfx.cpp )
-target_link_libraries (pp2dshell ${GTK2_LIBRARIES})
+add_executable (chomp-shell chomp-shell.cpp chomp.cpp gfx.cpp )
+target_link_libraries (chomp-shell ${GTK2_LIBRARIES})
