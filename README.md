@@ -16,11 +16,11 @@ You need [CMake][], [Eigen][] v3, and [GTK+][] v2.
 
 Changes from [trychomp][]:
 -------------------------
-* Sepration of GUI implementation from chomp implementation. chomp.cpp is now a library style function with no GUI code attached. chomp-shell.cpp is GUI only implementation with no actual chomp implementation.
+* Separation of GUI implementation from chomp implementation. chomp.cpp is now a library style function with no GUI code attached. chomp-shell.cpp is GUI only implementation with no actual chomp implementation.
 * Added Iteration limit and early termination criteria.
 * Obstacles (previously repulsors) are now handled via Matrix object (instead of custom handle_s structure).
 * chomp.cpp is not limited to 2 obstacles. In chomp-shell right clicking will add more obstacles.
-* If no inital trajectory *xi* is provided, chomp will use line of sight as inital guess. This drops down iteration count from ~350 previously to ~80 now.
+* If no initial trajectory *xi* is provided, chomp will use line of sight as initial guess. This drops down iteration count from ~350 previously to ~80 now.
 
 To Do:
 ------
