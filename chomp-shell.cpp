@@ -74,7 +74,7 @@ Matrix obs;     //A matrix containning all obstavles, each column is (x,y,R) of 
 
 void add_obs(double px,double py, double radius){
   //conservativeResize is used. It's a costy operation, but hopefully will not
-  // be done to often.
+  // be done too often.
   obs.conservativeResize(obs_dim,obs.cols()+1);
   obs.block(0,obs.cols()-1,obs_dim,1)<<px,py,radius;
 }
