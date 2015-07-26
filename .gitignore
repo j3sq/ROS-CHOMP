@@ -27,5 +27,9 @@
 *.out
 *.app
 
-# Temp files
+# Temp and hidden files
 *~
+.*
+
+# Build directory
+/build
