@@ -66,37 +66,22 @@ using namespace std;
 
 static size_t const cdim (2);	// dimension of config space
 static size_t const nq (20);	// number of q stacked into xi
+static size_t const obs_dim (3);	// x,y,R
 Vector xi;			// the trajectory (q_1, q_2, ...q_n)
 Vector qs;			// the start config a.k.a. q_0
 Vector qe;			// the end config a.k.a. q_(n+1)
 Matrix obs;     //A matrix containning all obstavles, each column is (x,y,R) of the obstacle
 
-
+void add_obs(double px,double py, double radius){
+  //conservativeResize is used. It's a costy operation, but hopefully will not
+  // be done to often.
+  obs.conservativeResize(obs_dim,obs.cols()+1);
+  obs.block(0,obs.cols()-1,obs_dim,1)<<px,py,radius;
+}
 enum { PAUSE, STEP, RUN } state;
 
-struct handle_s {
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  handle_s (double px, double py, double radius, double red, double green, double blue, double alpha)
-    : point_(2),
-      radius_(radius),
-      red_(red),
-      green_(green),
-      blue_(blue),
-      alpha_(alpha)
-  {
-    point_ << px, py;
-  }
-
-  Vector point_;
-  double radius_, red_, green_, blue_, alpha_;
-};
-
-static handle_s rep1 (3.0, 0.0,   2.0, 0.0, 0.0, 1.0, 0.2);
-static handle_s rep2 (0.0, 3.0,   2.0, 0.0, 0.5, 1.0, 0.2);
-static size_t obs_count =2;
-static handle_s * handle[] = { &rep1, &rep2, 0,0,0,0 };
-static handle_s * grabbed (0);
+static size_t grabbed (-1);
 static Vector grab_offset (3);
 
 
@@ -202,11 +187,7 @@ static void cb_idle ()
   if (state == PAUSE) return;
   // end of "the" CHOMP iteration
   //////////////////////////////////////////////////
-  size_t ii=0;
-  for (handle_s ** hh (handle); *hh != 0; ++hh) {
-    obs.block(0,ii,cdim+1,1)<<(*hh)->point_,(*hh)->radius_;
-    ii++;
-  }
+
   chomp::run_chomp(qs,qe,xi,obs);
   update_robots ();
 
@@ -269,10 +250,9 @@ static void cb_draw ()
 
   //////////////////////////////////////////////////
   // handles
-
-  for (handle_s ** hh (handle); *hh != 0; ++hh) {
-    gfx::set_pen (1.0, (*hh)->red_, (*hh)->green_, (*hh)->blue_, (*hh)->alpha_);
-    gfx::fill_arc ((*hh)->point_[0], (*hh)->point_[1], (*hh)->radius_, 0.0, 2.0 * M_PI);
+  for (size_t ii = 0; ii< obs.cols(); ++ii) {
+    gfx::set_pen (1.0, 0.0, 0.0, 1.0, 0.2);
+    gfx::fill_arc (obs(0,ii), obs(1,ii), obs(2,ii), 0.0, 2.0 * M_PI);
   }
 
 }
@@ -282,30 +262,30 @@ static void cb_mouse (double px, double py, int flags)
 {
 if ((flags & gfx::MOUSE_RELEASE) && (flags & gfx::MOUSE_B3)) {
   //add new obstacle at that location
+  add_obs (px, py, 2.0);
 }
 
   else if (flags & gfx::MOUSE_PRESS) {
-    for (handle_s ** hh (handle); *hh != 0; ++hh) {
-      Vector offset ((*hh)->point_);
+    for (size_t ii=0; ii<obs.cols() ; ++ii) {
+      Vector offset (obs.block(0,ii,2,1));
       offset[0] -= px;
       offset[1] -= py;
-      if (offset.norm() <= (*hh)->radius_) {
-    	grab_offset = offset;
-    	grabbed = *hh;
+      if (offset.norm() <= obs(2,ii)) {
+      grab_offset = offset;
+      grabbed = ii;
       state=RUN;
-    	break;
+      break;
       }
     }
   }
   else if (flags & gfx::MOUSE_DRAG) {
-    if (0 != grabbed) {
-      grabbed->point_[0] = px;
-      grabbed->point_[1] = py;
-      grabbed->point_ += grab_offset;
+    if (-1 != grabbed) {
+      obs(0,grabbed) = px+grab_offset(0);
+      obs(1,grabbed) = py+grab_offset(1);
     }
   }
   else if (flags & gfx::MOUSE_RELEASE) {
-    grabbed = 0;
+    grabbed = -1;
     state = PAUSE;
   }
 
@@ -329,12 +309,10 @@ int main()
   qs << -5.0, -5.0;
   qe.resize (cdim);
   qe << 7.0, 7.0;
-  obs.resize(cdim+1,obs_count);
-  size_t ii=0;
-  for (handle_s ** hh (handle); *hh != 0; ++hh) {
-    obs.block(0,ii,cdim+1,1)<<(*hh)->point_,(*hh)->radius_;
-    ii++;
-  }
+  add_obs (3.0, 0.0, 2.0);
+  add_obs (0.0, 3.0, 2.0);
+
+
   chomp::run_chomp(qs,qe,xi,obs);
   update_robots ();
   state = PAUSE;
