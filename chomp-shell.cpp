@@ -1,47 +1,18 @@
-/* Trials with CHOMP.
+/* ROS-CHOMP.
  *
- * Copyright (C) 2014 Roland Philippsen. All rights reserved.
- *
- * BSD license:
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of
- *    contributors to this software may be used to endorse or promote
- *    products derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHORS AND CONTRIBUTORS ``AS IS''
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
- * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT
- * HOLDER OR THE CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+ * Copyright (C) 2015 Jafar Qutteineh. All rights reserved.
+ * License (3-Cluase BSD): https://github.com/j3sq/ROS-CHOMP/blob/master/LICENSE
+
+* This code uses and is based on code from:
+*   Project: trychomp https://github.com/poftwaresatent/trychomp
+*   Copyright (C) 2014 Roland Philippsen. All rights reserved.
+*   License (3-Clause BSD) : https://github.com/poftwaresatent/trychomp
 
 /**
-   \file pp2d.cpp
+   \file chomp-shell.cpp
 
-   Interactive trials with CHOMP for point vehicles moving
-   holonomously in the plane.  There is a fixed start and goal
-   configuration, and you can drag a circular obstacle around to see
-   how the CHOMP algorithm reacts to that.  Some of the computations
-   involve guesswork, for instance how best to compute velocities, so
-   a simple first-order scheme has been used.  This appears to produce
-   some unwanted drift of waypoints from the start configuration to
-   the end configuration.  Parameters could also be tuned a bit
-   better.  Other than that, it works pretty nicely.
+   An interactive GUI for chomp. Click and drag obstacless to move them around. Add more obstacles by right clicking.
+
 */
 
 #include "gfx.hpp"
@@ -147,52 +118,15 @@ static void update_robots ()
   for (size_t ii (0); ii < nq; ++ii) {
     robots[ii].update (xi.block (ii * cdim, 0, cdim, 1));
   }
-
 }
-
-
-
-
-
-static void cb_step ()
-{
-  state = STEP;
-}
-
-
-static void cb_run ()
-{ /*
-  if (RUN == state) {
-    state = PAUSE;
-  }
-  else {
-    state = RUN;
-  } */
-}
-
-
-static void cb_jumble ()
-{ /*
-  for (size_t ii (0); ii < xidim; ++ii) {
-    xi[ii] = double (rand()) / (0.1 * numeric_limits<int>::max()) - 5.0;
-  }
-  update_robots();
-  */
-}
-
 
 static void cb_idle ()
 {
+  if (state == PAUSE) return;// nothinh new happened
 
-  if (state == PAUSE) return;
-  // end of "the" CHOMP iteration
-  //////////////////////////////////////////////////
-
-  chomp::run_chomp(qs,qe,xi,obs);
+  chomp::chomp(qs,qe,xi,obs);
   update_robots ();
-
 }
-
 
 static void cb_draw ()
 {
@@ -294,17 +228,6 @@ if ((flags & gfx::MOUSE_RELEASE) && (flags & gfx::MOUSE_B3)) {
 
 int main()
 {
-  /*
-
-  update_robots();
-
-
-  gfx::add_button ("jumble", cb_jumble);
-  gfx::add_button ("step", cb_step);
-  gfx::add_button ("run", cb_run);
-  gfx::main ("chomp", cb_idle, cb_draw, cb_mouse);
-*/
-
   qs.resize (cdim);
   qs << -5.0, -5.0;
   qe.resize (cdim);
@@ -312,8 +235,7 @@ int main()
   add_obs (3.0, 0.0, 2.0);
   add_obs (0.0, 3.0, 2.0);
 
-
-  chomp::run_chomp(qs,qe,xi,obs);
+  chomp::chomp(qs,qe,xi,obs);
   update_robots ();
   state = PAUSE;
   gfx::main ("chomp", cb_idle, cb_draw, cb_mouse);
