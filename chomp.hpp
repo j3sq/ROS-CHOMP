@@ -17,11 +17,8 @@
 
 #ifndef CHOMP_HPP
 #define CHOMP_HPP
-
+#include <Eigen/Dense>
 namespace chomp {
-typedef Eigen::VectorXd Vector;
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::Isometry3d Transform;
-void chomp(Vector const &qs, Vector const &qe, Vector &xi, Matrix const &obs);
+void chomp(Eigen::VectorXd const &qs, Eigen::VectorXd const &qe, Eigen::VectorXd &xi, Eigen::MatrixXd const &obs);
 }
 #endif // CHOMP_HPP

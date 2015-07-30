@@ -98,3 +98,5 @@ endif (GTK2_FOUND)
 
 add_executable (chomp-shell chomp-shell.cpp chomp.cpp gfx.cpp )
 target_link_libraries (chomp-shell ${GTK2_LIBRARIES})
+
+#add_executable (minimal_program minimal_program.cpp chomp.cpp)

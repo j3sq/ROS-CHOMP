@@ -14,10 +14,7 @@
  * plan a trajectory (xi) connecting start point (qs) to end point (qe) while
  * avoiding obstacles (obs)
  */
-
-
 #include <iostream>
-#include <vector>
 #include <Eigen/Dense>
 #include <stdlib.h>
 #include <err.h>

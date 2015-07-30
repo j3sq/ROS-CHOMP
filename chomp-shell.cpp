@@ -41,7 +41,7 @@ static size_t const obs_dim(3); // x,y,R
 Vector xi;                      // the trajectory (q_1, q_2, ...q_n)
 Vector qs;                      // the start config a.k.a. q_0
 Vector qe;                      // the end config a.k.a. q_(n+1)
-Matrix obs;                     //A matrix containning all obstavles, each column is (x,y,R) of the obstacle
+Matrix obs;                     // Matrix containninging all obstacles, each column is (x,y,R) of the obstacle
 
 void add_obs(double px, double py, double radius)
 {
