@@ -17,7 +17,7 @@ You need [CMake][], [Eigen][] v3, and [GTK+][] v2.
 Usage:
 ------
 ```c++
-void chomp(VectorXd const &qs, VectorXd const &qe, VectorXd &xi, MatrixXd const &obs);
+void generatePath(VectorXd const &qs, VectorXd const &qe, VectorXd &xi, MatrixXd const &obs);
 ```
 * qs : Start point (x,y) as a 2x1 vector.
 * qe : End point (x,y) as a 2x1 vector.

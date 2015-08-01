@@ -19,6 +19,6 @@
 #define CHOMP_HPP
 #include <Eigen/Dense>
 namespace chomp {
-void chomp(Eigen::VectorXd const &qs, Eigen::VectorXd const &qe, Eigen::VectorXd &xi, Eigen::MatrixXd const &obs);
+void generatePath(Eigen::VectorXd const &qs, Eigen::VectorXd const &qe, Eigen::VectorXd &xi, Eigen::MatrixXd const &obs);
 }
 #endif // CHOMP_HPP

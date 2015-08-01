@@ -13,6 +13,6 @@ int main()
   qs<<0,0;
   qe<<3,5;
 
-  chomp::chomp(qs,qe,xi,obs);
+  chomp::generatePath(qs,qe,xi,obs);
   std::cout<<xi<<std::endl;
 }

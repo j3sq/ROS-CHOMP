@@ -148,7 +148,7 @@ static double chomp_iteration(Vector const &qs, Vector const &qe, Vector  &xi, M
 	//////////////////////////////////////////////////
 }
 
-void chomp(Vector const &qs, Vector const &qe, Vector &xi, Matrix const &obs)
+void generatePath(Vector const &qs, Vector const &qe, Vector &xi, Matrix const &obs)
 {
 	init_chomp(qs, qe, xi);
 	double err;

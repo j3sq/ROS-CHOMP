@@ -119,7 +119,7 @@ static void cb_idle()
 {
 	if (state == PAUSE) return;  // nothinh new happened
 
-	chomp::chomp(qs, qe, xi, obs);
+	chomp::generatePath(qs, qe, xi, obs);
 	update_robots();
 }
 
@@ -218,7 +218,7 @@ int main()
 	add_obs(3.0, 0.0, 2.0);
 	add_obs(0.0, 3.0, 2.0);
 
-	chomp::chomp(qs, qe, xi, obs);
+	chomp::generatePath(qs, qe, xi, obs);
 	update_robots();
 	state = PAUSE;
 	gfx::main("chomp", cb_idle, cb_draw, cb_mouse);
