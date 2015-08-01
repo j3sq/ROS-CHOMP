@@ -26,7 +26,7 @@ void chomp(VectorXd const &qs, VectorXd const &qe, VectorXd &xi, MatrixXd const 
 
 Notes:
 * If the function is called with a non empty trajectory xi, the function will use the provided trajectory as an initial guess for the chomp algorithm.
-* minimal_program.cpp provide shows a basic example of using chomp
+* minimal_program.cpp shows a basic example of using chomp
 
 
 Changes from [trychomp][]:
