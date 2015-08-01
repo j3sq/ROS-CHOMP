@@ -14,28 +14,19 @@ You need [CMake][], [Eigen][] v3, and [GTK+][] v2.
     make
     ./chomp-shell
 
-Minimal Program:
+Usage:
 ------
 ```c++
-#include <iostream>
-#include <Eigen/Dense>
-#include "chomp.hpp"
-
-int main()
-{
-  Eigen::VectorXd qs(2); //Start goal  coordinates (x,y)
-  Eigen::VectorXd qe(2); //End goal  coordinates (x,y)
-  Eigen::VectorXd xi; //Trajectory points (x0,y0,x1,y1,....)
-  Eigen::MatrixXd obs; //obstacles |x0,y0,R0|
-                      //           |x1,y1,R1|
-                      //           | .......|
-  qs<<0,0;
-  qe<<3,5;
-
-  chomp::chomp(qs,qe,xi,obs);
-  std::cout<<xi<<std::endl;
-}
+void chomp(VectorXd const &qs, VectorXd const &qe, VectorXd &xi, MatrixXd const &obs);
 ```
+* qs : Start point (x,y) as a 2x1 vector.
+* qe : End point (x,y) as a 2x1 vector.
+* xi : Generated chomp trajectory points (x<sub>1</sub>,y<sub>1</sub>,x<sub>2</sub>,y<sub>2</sub>,...,x<sub>N</sub>,y<sub>N</sub>) as 2*Nx1 vector. N is currently fixed to 20.
+* obs : A matrix of disk like obstacles of size Kx3. Each row is (x,y,R) of the obstacle.
+
+Notes:
+* If the function is called with a non empty trajectory xi, the function will use the provided trajectory as an initial guess for the chomp algorithm.
+* minimal_program.cpp provide shows a basic example of using chomp
 
 
 Changes from [trychomp][]:
