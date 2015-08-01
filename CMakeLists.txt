@@ -95,10 +95,11 @@ else (GTK2_FOUND)
 endif (GTK2_FOUND)
 
 ##################################################
+include_directories (include)
 
-add_executable (chomp-shell chomp-shell.cpp chomp.cpp gfx.cpp )
+add_executable (chomp-shell demo/chomp-shell.cpp src/chomp.cpp demo/gfx.cpp )
 target_link_libraries (chomp-shell ${GTK2_LIBRARIES})
 
-add_executable (minimal_program minimal_program.cpp chomp.cpp)
+add_executable (minimal_program demo/minimal_program.cpp src/chomp.cpp)
 
-add_executable (ros_chomp ros_chomp.cpp chomp.cpp)
+#add_executable (ros_chomp ros_chomp.cpp chomp.cpp)
