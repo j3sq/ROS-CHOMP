@@ -29,7 +29,6 @@ Trajectory trajectory;
 
 Trajectory generateTrajectory(Vector const &xi)
 {
-	ROS_INFO_STREAM(endl << xi << endl);
 	Trajectory trajectory;
 	trajectory.dt = 1.0;
 	vector <TrajectoryPoint> points(xi.size() / 2);
@@ -54,7 +53,7 @@ void pathPlannerCallback(const cargo_ants_msgs::Path::ConstPtr &msg)
 {
 	vector <cargo_ants_msgs::Goal> goals = msg->goals;
 	if (goals.size() < 2) {
-		ROS_INFO("At least 2 goal points are required, received %d", goals.size());
+		ROS_INFO("At least 2 goal points are required, received %lu", goals.size());
 		return;
 	}
 	Vector qs(2), qe(2), xi;

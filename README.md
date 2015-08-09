@@ -1,7 +1,7 @@
-ROS-CHOMP
+Cargo-ANTS Path Adaptor
 =================
 
-Based on source code available at [trychomp][]
+CHOMP implementation is based on source code from [trychomp][]
 
 Build and Run GUI:
 -------
@@ -29,19 +29,20 @@ Notes:
 * demo/minimal_program.cpp shows a basic example of using chomp
 
 
-Changes from [trychomp][]:
--------------------------
-* Separation of GUI implementation from chomp implementation. chomp.cpp is now a library style function with no GUI code attached. chomp-shell.cpp is GUI only implementation with no actual chomp implementation.
-* Added Iteration limit and early termination criteria.
-* Obstacles (previously repulsors) are now handled via Matrix object (instead of custom handle_s structure).
-* chomp.cpp is not limited to 2 obstacles. In chomp-shell right clicking will add more obstacles.
-* If no initial trajectory *xi* is provided, chomp will use line of sight as initial guess. This considerably drops down the number of iterations to reach a solution
+ROS Support:
+------------
+You need [Cargo-ANTS][] for messages definitions. Place the project folder inside
+ (path_to_ros_workspace)/src and then build by executing catkin_make
+ For testing:
 
-To Do:
-------
-* Add support for other vehicles
-* Add ROS support
-* Enforce NH motion model
+    roscore
+    //on a separate terminal
+    rosrun cargo_ants_path_adaptor path_adaptor
+    //on a separate terminal
+    rostopic echo /trajectory  
+    //on a separate terminal. Replace x0,y0 and x1,y1 (below) by coordinates of start and end points respectively.
+    rostopic pub -1 /path_planner cargo_ants_msgs/Path '{mode: 0, container: name , goals: [{gx:x0, gy: y0, gth: 0, dr: 0, dth: 0},{gx: x1, gy: y1, gth: 0, dr: 0, dth: 0}]}'
+
 
 As the name implies, this is based on [CHOMP][].
 
@@ -50,3 +51,4 @@ As the name implies, this is based on [CHOMP][].
 [GTK+]: http://www.gtk.org/
 [CHOMP]: http://www.nathanratliff.com/research/chomp
 [trychomp]: https://github.com/poftwaresatent/trychomp
+[Cargo-ANTS]: https://github.com/jenniferdavid/cargo-ants-ros

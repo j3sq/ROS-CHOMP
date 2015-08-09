@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ros_chomp)
+project(cargo_ants_path_adaptor)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -106,14 +106,14 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(ros_chomp src/ros_chomp.cpp ../src/chomp.cpp)
+add_executable(path_adaptor src/ros_chomp.cpp ../src/chomp.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(ros_chomp_node ros_chomp_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(ros_chomp
+ target_link_libraries(path_adaptor
   ${Eigen_LIBRARIES}
   ${catkin_LIBRARIES}
  )
