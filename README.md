@@ -41,7 +41,8 @@ You need [Cargo-ANTS][] for messages definitions. Place the project folder insid
     //on a separate terminal
     rostopic echo /trajectory  
     //on a separate terminal. Replace x0,y0 and x1,y1 (below) by coordinates of start and end points respectively.
-    rostopic pub -1 /path_planner cargo_ants_msgs/Path '{mode: 0, container: name , goals: [{gx:x0, gy: y0, gth: 0, dr: 0, dth: 0},{gx: x1, gy: y1, gth: 0, dr: 0, dth: 0}]}'
+    rostopic pub -1 /path_planner cargo_ants_msgs/Path '{mode: 0, container: name , goals: [{gx: x0, gy: y0, gth: 0, dr: 0, dth: 0},{gx: x1, gy: g1, gth: 0, dr: 0, dth: 0}]}'
+
 
 
 As the name implies, this is based on [CHOMP][].
