@@ -31,17 +31,16 @@ Notes:
 ## ROS Support:
 You need [Cargo-ANTS][] for messages definitions. Place the project folder inside  (path_to_ros_workspace)/src and then build by executing catkin_make.<br>For testing:
 
-```
-roscore
-//on a separate terminal
-rosrun cargo_ants_path_adaptor path_adaptor
-//on a separate terminal
-rostopic echo /trajectory  
-//on a separate terminal. Replace x0,y0 and x1,y1 (below) by coordinates of start and end points respectively.
-rostopic pub -1 /path_planner cargo_ants_msgs/Path '{mode: 0, container: name , goals: [{gx:x0, gy: y0, gth: 0, dr: 0, dth: 0}, {gx: x1, gy: y1, gth: 0, dr: 0, dth: 0}]}'
-//on a separate terminal. Replace o0,o0,R0 and o1,y1,R1 (below) by coordinates x,y,Radius of obstacles
-rostopic pub -1 /obstacles cargo_ants_msgs/ObstacleMap '{obstacles:[origin: {ox : x0, oy : y0 , oth : R0}, origin:{ox : x1, oy : y1, oth : R1}]}'
-```
+    roscore
+    //on a separate terminal
+    rosrun cargo_ants_path_adaptor path_adaptor
+    //on a separate terminal
+    rostopic echo /trajectory  
+    //on a separate terminal. Replace x0,y0 and x1,y1 (below) by coordinates of start and end points respectively.
+    rostopic pub -1 /path_planner cargo_ants_msgs/Path '{mode: 0, container: name , goals: [{gx: x0, gy: y0, gth: 0, dr: 0, dth: 0},{gx: x1, gy: g1, gth: 0, dr: 0, dth: 0}]}'
+    //on a separate terminal. Replace o0,o0,R0 and o1,y1,R1 (below) by coordinates x,y,Radius of obstacles
+    rostopic pub -1 /obstacles cargo_ants_msgs/ObstacleMap '{obstacles:[origin: {ox : x0, oy : y0 , oth : R0}, origin:{ox : x1, oy : y1, oth : R1}]}'
+
 
 
 [cmake]: http://cmake.org/
