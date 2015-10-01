@@ -1,8 +1,8 @@
 # Cargo-ANTS Path Adaptor
-CHOMP implementation is based on source code from [trychomp][]
+CHOMP implementation is based on source code from [trychomp][] which is based on [CHOMP][].
 
 ## Build and Run GUI:
-You need [CMake][], [Eigen][] v3, and [GTK+][] v2.
+You need [CMake][], [Eigen][] v3, and [GTK+][] v2 (only the GUI).
 
 ```
 git clone https://github.com/j3sq/ROS-CHOMP.git chomp
@@ -39,9 +39,10 @@ rosrun cargo_ants_path_adaptor path_adaptor
 rostopic echo /trajectory  
 //on a separate terminal. Replace x0,y0 and x1,y1 (below) by coordinates of start and end points respectively.
 rostopic pub -1 /path_planner cargo_ants_msgs/Path '{mode: 0, container: name , goals: [{gx:x0, gy: y0, gth: 0, dr: 0, dth: 0}, {gx: x1, gy: y1, gth: 0, dr: 0, dth: 0}]}'
+//on a separate terminal. Replace o0,o0,R0 and o1,y1,R1 (below) by coordinates x,y,Radius of obstacles
+rostopic pub -1 /obstacles cargo_ants_msgs/ObstacleMap '{obstacles:[origin: {ox : x0, oy : y0 , oth : R0}, origin:{ox : x1, oy : y1, oth : R1}]}'
 ```
 
-As the name implies, this is based on [CHOMP][].
 
 [cmake]: http://cmake.org/
 [eigen]: http://eigen.tuxfamily.org/
