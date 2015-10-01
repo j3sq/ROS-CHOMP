@@ -19,22 +19,29 @@
 #include <cargo_ants_msgs/Goal.h>       // member of Path msg
 #include <cargo_ants_msgs/ReferenceTrajectory.h>
 #include <cargo_ants_msgs/ReferenceTrajectoryPoint.h>
+#include <cargo_ants_msgs/ObstacleMap.h>
+#include <cargo_ants_msgs/Obstacle.h>
 
 using namespace std;
 typedef Eigen::VectorXd Vector;
 typedef Eigen::MatrixXd Matrix;
+typedef cargo_ants_msgs::ObstacleMap ObstacleMap;
 typedef cargo_ants_msgs::ReferenceTrajectory Trajectory;
 typedef cargo_ants_msgs::ReferenceTrajectoryPoint TrajectoryPoint;
 Trajectory trajectory;
+ObstacleMap obstacleMap;
+Vector qs(2), qe(2), xi;
 
 Trajectory generateTrajectory(Vector const &xi)
 {
 	Trajectory trajectory;
 	trajectory.dt = 1.0;
-	vector <TrajectoryPoint> points(xi.size() / 2);
-	for (size_t ii = 0; ii < xi.size() / 2; ii++){
-		points[ii].xx = xi[ii*2];
-		points[ii].yy = xi[ii*2+1];
+	Vector xi_copy(xi.size()+qs.size()+qe.size());
+	xi_copy<<qs,xi,qe; //copy xi and add starting point and end point
+	vector <TrajectoryPoint> points(xi_copy.size() / 2);
+	for (size_t ii = 0; ii < xi_copy.size() / 2; ii++){
+		points[ii].xx = xi_copy[ii*2];
+		points[ii].yy = xi_copy[ii*2+1];
 		//finite backward difference,mind the indicies!
 		if (ii>0){
 			points[ii].xd = (points[ii].xx-points[ii-1].xx)/trajectory.dt;
@@ -56,29 +63,38 @@ void pathPlannerCallback(const cargo_ants_msgs::Path::ConstPtr &msg)
 		ROS_INFO("At least 2 goal points are required, received %lu", goals.size());
 		return;
 	}
-	Vector qs(2), qe(2), xi;
-	Matrix obs;
 	for (size_t ii = 0; ii < goals.size() - 1; ii++) {
 		qs << goals[ii].gx, goals[ii].gy;
 		qe << goals[ii + 1].gx, goals[ii + 1].gy;
-		chomp::generatePath(qs, qe, xi, obs);
-		trajectory = generateTrajectory(xi);
-
 	}
+}
+
+void obstaclesCallback(const cargo_ants_msgs::ObstacleMap::ConstPtr &msg)
+{
+	obstacleMap.obstacles = msg->obstacles;
 }
 
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "path_adaptor");
 	ros::NodeHandle node;
-	ros::Subscriber sub = node.subscribe("path_planner", 1000, pathPlannerCallback);
+	ros::Subscriber path_sub = node.subscribe("path_planner", 1000, pathPlannerCallback);
+	ros::Subscriber obs_sub = node.subscribe("obstacles", 1000, obstaclesCallback);
 	ros::Publisher trajectory_pub = node.advertise<Trajectory> ( "/trajectory", 10);
 	ros::Rate loop_rate (10);
 	ROS_INFO("path_adaptor Started!");
 	while ( ros::ok() ){
-	ros::spinOnce();
-	trajectory_pub.publish(trajectory);
-	loop_rate.sleep();
+		ros::spinOnce();
+		Matrix obs(3,obstacleMap.obstacles.size());
+		for (size_t ii = 0; ii < obstacleMap.obstacles.size() ; ++ii) {
+			obs.col(ii) << obstacleMap.obstacles[ii].origin.ox,
+			 								obstacleMap.obstacles[ii].origin.oy,
+											obstacleMap.obstacles[ii].origin.oth;
+		}
+		chomp::generatePath(qs, qe, xi, obs);
+		trajectory = generateTrajectory(xi);
+		trajectory_pub.publish(trajectory);
+		loop_rate.sleep();
 }
 	return 0;
 	// VectorXd qs(2);  //Start goal  coordinates (x,y)

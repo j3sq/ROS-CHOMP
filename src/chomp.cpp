@@ -34,7 +34,7 @@ namespace chomp {
 static size_t const nq(20);             // number of q stacked into xi
 static size_t const cdim(2);            // dimension of config space
 static size_t const xidim(nq *cdim);    // dimension of trajectory, xidim = nq * cdim
-static size_t const iteration_limit(1000);
+static size_t const iteration_limit(10000);
 static double const dt(1.0);            // time step
 static double const eta(100.0);         // >= 1, regularization factor for gradient descent
 static double const lambda(1.0);        // weight of smoothness objective
@@ -155,7 +155,6 @@ void generatePath(Vector const &qs, Vector const &qe, Vector &xi, Matrix const &
 	for (size_t ii = 0; ii < iteration_limit; ii++) {
 		err = chomp_iteration(qs, qe, xi, obs);
 		if (err < 0.01)
-			//cout<<"Done after "<<ii+1<<" iteration."<<endl;
 			break;
 	}
 }
